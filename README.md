@@ -5,7 +5,7 @@ Rich text editor component for React, built on top of [TipTap](https://tiptap.de
 ## Installation
 
 ```bash
-npm install magic-text
+npm i tiptap-magictext
 ```
 
 > **Peer dependencies:** `react` and `react-dom` >= 18 must be installed in your project.
