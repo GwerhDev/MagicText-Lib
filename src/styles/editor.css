@@ -2,10 +2,10 @@
 .magic-editor {
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  overflow: hidden;
   background: #ffffff;
   font-family: inherit;
   color: #0f172a;
+  position: relative;
 }
 
 /* ─── Toolbar ───────────────────────────────────────────────────────────────── */
@@ -17,6 +17,7 @@
   padding: 6px 8px;
   border-bottom: 1px solid #e2e8f0;
   background: #f8fafc;
+  border-radius: 8px 8px 0 0;
 }
 
 /* ─── Toolbar button ────────────────────────────────────────────────────────── */
@@ -176,4 +177,139 @@
 /* ─── Selection ─────────────────────────────────────────────────────────────── */
 .magic-editor .ProseMirror ::selection {
   background: #bfdbfe;
+}
+
+/* ─── Variable picker ───────────────────────────────────────────────────────── */
+.magic-editor__var-wrap {
+  position: relative;
+}
+
+.magic-editor__var-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 100;
+  min-width: 220px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.magic-editor__var-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.magic-editor__var-btn {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.magic-editor__var-btn:hover {
+  background: #f1f5f9;
+}
+
+.magic-editor__var-add {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+}
+
+.magic-editor__var-input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 7px;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  font-size: 12px;
+  font-family: inherit;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+}
+
+.magic-editor__var-input:focus {
+  border-color: #93c5fd;
+  background: #ffffff;
+}
+
+.magic-editor__var-add-btn {
+  height: 28px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 5px;
+  background: #1d4ed8;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.magic-editor__var-add-btn:hover {
+  background: #1e40af;
+}
+
+/* ─── Variable chips (inline nodes) ─────────────────────────────────────────── */
+.magic-editor__variable {
+  display: inline;
+}
+
+.magic-editor__variable-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+  font-size: 0.875em;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s ease;
+}
+
+.magic-editor__variable-chip:hover {
+  background: #bfdbfe;
+}
+
+.magic-editor__variable-chip--filled {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.magic-editor__variable-chip--filled:hover {
+  background: #bbf7d0;
+}
+
+.magic-editor__variable-edit {
+  display: inline;
+  padding: 1px 6px;
+  border: 1px solid #93c5fd;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.875em;
+  font-family: inherit;
+  outline: none;
+  min-width: 40px;
 }

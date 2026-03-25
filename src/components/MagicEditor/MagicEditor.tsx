@@ -12,9 +12,11 @@ import Color from '@tiptap/extension-color'
 
 import type { MagicEditorProps } from '../../types'
 import { Toolbar } from '../Toolbar'
+import { VariableExtension } from '../../extensions/VariableExtension'
 
 const EXTENSIONS = [
   StarterKit,
+  VariableExtension,
   Underline,
   TextAlign.configure({ types: ['heading', 'paragraph'] }),
   Highlight.configure({ multicolor: true }),
@@ -40,6 +42,8 @@ export function MagicEditor({
   className,
   toolbarClassName,
   contentClassName,
+  variables,
+  onVariableAdd,
 }: MagicEditorProps) {
   const getOutput = (editor: ReturnType<typeof useEditor>) =>
     outputType === 'json' ? editor!.getJSON() : editor!.getHTML()
@@ -89,7 +93,7 @@ export function MagicEditor({
 
   return (
     <div className={`magic-editor${className ? ` ${className}` : ''}`}>
-      {editable && <Toolbar editor={editor} className={toolbarClassName} />}
+      {editable && <Toolbar editor={editor} className={toolbarClassName} variables={variables} onVariableAdd={onVariableAdd} />}
       <EditorContent
         editor={editor}
         className={`magic-editor__content${contentClassName ? ` ${contentClassName}` : ''}`}

@@ -1,9 +1,17 @@
 import { useState } from 'react'
 import { MagicEditor } from 'magic-text'
-import type { JSONContent, ContentType } from 'magic-text'
+import type { JSONContent, ContentType, Variable } from 'magic-text'
 import '../../src/styles/editor.css'
 
 const INITIAL_HTML = `<h2>Welcome to MagicText</h2><p>This is a <strong>rich text editor</strong> built with <em>TipTap</em>. Try editing the content!</p><ul><li>Bold, italic, underline</li><li>Headings and lists</li><li>Links and images</li></ul>`
+
+const EXAMPLE_VARIABLES: Variable[] = [
+  { label: 'First name' },
+  { label: 'Last name'  },
+  { label: 'Email'      },
+  { label: 'Company'    },
+  { label: 'Phone'      },
+]
 
 export default function App() {
   const [editable, setEditable] = useState(true)
@@ -63,6 +71,8 @@ export default function App() {
         onChange={handleChange}
         placeholder="Start writing something..."
         editable={editable}
+        variables={EXAMPLE_VARIABLES}
+        onVariableAdd={(v) => console.log('[dev] variable added:', v)}
       />
 
       <details style={{ marginTop: 32 }}>
