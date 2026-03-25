@@ -14,7 +14,6 @@ npm i tiptap-magictext
 
 ```tsx
 import { MagicEditor } from 'magic-text'
-import 'magic-text/styles'
 
 export default function App() {
   return (
@@ -107,11 +106,7 @@ When `outputType` changes at runtime the component immediately fires `onChange` 
 
 ## Styles
 
-Styles are distributed as a separate CSS file so you can opt in:
-
-```tsx
-import 'magic-text/styles'
-```
+Styles are injected automatically when the component is imported — no extra CSS import needed.
 
 Classes follow the `magic-editor__*` BEM convention so they are easy to override.
 
