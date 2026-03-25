@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
+import cssInjectedByJs from 'vite-plugin-css-injected-by-js'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -9,6 +10,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 export default defineConfig({
   plugins: [
     react(),
+    cssInjectedByJs(),
     dts({
       include: ['src'],
       outDir: 'dist',
