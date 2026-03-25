@@ -1,2 +1,2 @@
-export { MagicEditor } from './MagicEditor'
+export { MagicTextEditor } from './MagicTextEditor'
 export { Toolbar, ToolbarButton, ToolbarDivider } from './Toolbar'

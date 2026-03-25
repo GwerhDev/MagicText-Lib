@@ -20,7 +20,7 @@ export function ToolbarButton({ onClick, active, disabled, title, children }: To
       title={title}
       aria-label={title}
       aria-pressed={active}
-      className={`magic-editor__btn${active ? ' magic-editor__btn--active' : ''}`}
+      className={`magic-text-editor__btn${active ? ' magic-text-editor__btn--active' : ''}`}
     >
       {children}
     </button>

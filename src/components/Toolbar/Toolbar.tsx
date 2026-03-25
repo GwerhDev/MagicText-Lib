@@ -41,7 +41,7 @@ export function Toolbar({ editor, className, variables, onVariableAdd }: Toolbar
     <div
       role="toolbar"
       aria-label="Text formatting"
-      className={`magic-editor__toolbar${className ? ` ${className}` : ''}`}
+      className={`magic-text-editor__toolbar${className ? ` ${className}` : ''}`}
     >
       {/* History */}
       <ToolbarButton

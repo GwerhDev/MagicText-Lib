@@ -10,7 +10,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import TextStyle from '@tiptap/extension-text-style'
 import Color from '@tiptap/extension-color'
 
-import type { MagicEditorProps } from '../../types'
+import type { MagicTextEditorProps } from '../../types'
 import { Toolbar } from '../Toolbar'
 import { VariableExtension } from '../../extensions/VariableExtension'
 
@@ -29,7 +29,7 @@ const EXTENSIONS = [
   Color,
 ]
 
-export function MagicEditor({
+export function MagicTextEditor({
   content = '',
   inputType = 'html',
   outputType = 'html',
@@ -44,7 +44,7 @@ export function MagicEditor({
   contentClassName,
   variables,
   onVariableAdd,
-}: MagicEditorProps) {
+}: MagicTextEditorProps) {
   const getOutput = (editor: ReturnType<typeof useEditor>) =>
     outputType === 'json' ? editor!.getJSON() : editor!.getHTML()
 
@@ -92,11 +92,11 @@ export function MagicEditor({
   }, [content]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className={`magic-editor${className ? ` ${className}` : ''}`}>
+    <div className={`magic-text-editor${className ? ` ${className}` : ''}`}>
       {editable && <Toolbar editor={editor} className={toolbarClassName} variables={variables} onVariableAdd={onVariableAdd} />}
       <EditorContent
         editor={editor}
-        className={`magic-editor__content${contentClassName ? ` ${contentClassName}` : ''}`}
+        className={`magic-text-editor__content${contentClassName ? ` ${contentClassName}` : ''}`}
       />
     </div>
   )

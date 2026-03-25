@@ -7,7 +7,7 @@ export interface Variable {
   label: string
 }
 
-export interface MagicEditorProps {
+export interface MagicTextEditorProps {
   /** Content to display. Pass an HTML string when inputType="html" (default), or a JSONContent object when inputType="json". */
   content?: string | JSONContent
   /** Format of the incoming content prop. @default 'html' */

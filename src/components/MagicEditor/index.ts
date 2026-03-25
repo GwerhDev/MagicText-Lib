@@ -1,1 +1,0 @@
-export { MagicEditor } from './MagicEditor'

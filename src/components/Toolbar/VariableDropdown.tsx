@@ -44,7 +44,7 @@ export function VariableDropdown({ editor, variables = [], onVariableAdd }: Prop
   const allVars = [...variables, ...customVars]
 
   return (
-    <div className="magic-editor__var-wrap" ref={wrapRef}>
+    <div className="magic-text-editor__var-wrap" ref={wrapRef}>
       <button
         type="button"
         onMouseDown={(e) => {
@@ -56,21 +56,21 @@ export function VariableDropdown({ editor, variables = [], onVariableAdd }: Prop
         aria-pressed={open}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className={`magic-editor__btn${open ? ' magic-editor__btn--active' : ''}`}
+        className={`magic-text-editor__btn${open ? ' magic-text-editor__btn--active' : ''}`}
       >
         <VariableIcon />
       </button>
 
       {open && (
-        <div className="magic-editor__var-dropdown" role="dialog" aria-label="Variable picker">
+        <div className="magic-text-editor__var-dropdown" role="dialog" aria-label="Variable picker">
           {allVars.length > 0 && (
-            <ul className="magic-editor__var-list" role="listbox">
+            <ul className="magic-text-editor__var-list" role="listbox">
               {allVars.map((v, i) => (
                 <li key={i} role="option">
                   <button
                     type="button"
                     onMouseDown={(e) => { e.preventDefault(); insert(v) }}
-                    className="magic-editor__var-btn"
+                    className="magic-text-editor__var-btn"
                   >
                     {v.label}
                   </button>
@@ -79,9 +79,9 @@ export function VariableDropdown({ editor, variables = [], onVariableAdd }: Prop
             </ul>
           )}
 
-          <div className="magic-editor__var-add">
+          <div className="magic-text-editor__var-add">
             <input
-              className="magic-editor__var-input"
+              className="magic-text-editor__var-input"
               placeholder="Custom variable…"
               value={newLabel}
               onChange={e => setNewLabel(e.target.value)}
@@ -89,7 +89,7 @@ export function VariableDropdown({ editor, variables = [], onVariableAdd }: Prop
             />
             <button
               type="button"
-              className="magic-editor__var-add-btn"
+              className="magic-text-editor__var-add-btn"
               onMouseDown={(e) => { e.preventDefault(); addCustom() }}
             >
               Add
