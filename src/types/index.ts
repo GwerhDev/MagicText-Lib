@@ -2,7 +2,12 @@ import type { JSONContent } from '@tiptap/core'
 
 export type ContentType = 'html' | 'json'
 
-export interface MagicEditorProps {
+export interface Variable {
+  /** Display name shown in the variable picker and as the chip label in the editor. */
+  label: string
+}
+
+export interface MagicTextEditorProps {
   /** Content to display. Pass an HTML string when inputType="html" (default), or a JSONContent object when inputType="json". */
   content?: string | JSONContent
   /** Format of the incoming content prop. @default 'html' */
@@ -27,6 +32,10 @@ export interface MagicEditorProps {
   toolbarClassName?: string
   /** Extra class name for the content area. */
   contentClassName?: string
+  /** List of variables available in the toolbar variable picker. */
+  variables?: Variable[]
+  /** Called when the user adds a custom variable via the picker. */
+  onVariableAdd?: (variable: Variable) => void
 }
 
 export type { JSONContent }

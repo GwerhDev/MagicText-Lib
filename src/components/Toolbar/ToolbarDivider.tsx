@@ -1,3 +1,3 @@
 export function ToolbarDivider() {
-  return <div className="magic-editor__divider" role="separator" aria-hidden="true" />
+  return <div className="magic-text-editor__divider" role="separator" aria-hidden="true" />
 }

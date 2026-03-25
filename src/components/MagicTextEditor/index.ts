@@ -1,0 +1,1 @@
+export { MagicTextEditor } from './MagicTextEditor'

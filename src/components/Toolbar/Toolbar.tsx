@@ -1,6 +1,8 @@
 import type { Editor } from '@tiptap/react'
+import type { Variable } from '../../types'
 import { ToolbarButton } from './ToolbarButton'
 import { ToolbarDivider } from './ToolbarDivider'
+import { VariableDropdown } from './VariableDropdown'
 import {
   BoldIcon, ItalicIcon, UnderlineIcon, StrikeIcon,
   UndoIcon, RedoIcon,
@@ -12,9 +14,11 @@ import {
 interface ToolbarProps {
   editor: Editor | null
   className?: string
+  variables?: Variable[]
+  onVariableAdd?: (variable: Variable) => void
 }
 
-export function Toolbar({ editor, className }: ToolbarProps) {
+export function Toolbar({ editor, className, variables, onVariableAdd }: ToolbarProps) {
   if (!editor) return null
 
   const addLink = () => {
@@ -37,7 +41,7 @@ export function Toolbar({ editor, className }: ToolbarProps) {
     <div
       role="toolbar"
       aria-label="Text formatting"
-      className={`magic-editor__toolbar${className ? ` ${className}` : ''}`}
+      className={`magic-text-editor__toolbar${className ? ` ${className}` : ''}`}
     >
       {/* History */}
       <ToolbarButton
@@ -198,6 +202,13 @@ export function Toolbar({ editor, className }: ToolbarProps) {
       >
         <ImageIcon />
       </ToolbarButton>
+
+      {variables !== undefined && (
+        <>
+          <ToolbarDivider />
+          <VariableDropdown editor={editor} variables={variables} onVariableAdd={onVariableAdd} />
+        </>
+      )}
     </div>
   )
 }
