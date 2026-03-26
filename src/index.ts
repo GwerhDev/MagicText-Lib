@@ -1,4 +1,5 @@
 export { MagicTextEditor } from './components/MagicTextEditor'
 export { Toolbar, ToolbarButton, ToolbarDivider, VariableDropdown } from './components/Toolbar'
-export type { MagicTextEditorProps, JSONContent, ContentType, Variable } from './types'
+export type { MagicTextEditorProps, JSONContent, ContentType, Variable, Translations } from './types'
+export { registerLocale, resolveTranslations, useTranslations, en, es } from './i18n'
 import './styles/editor.css'

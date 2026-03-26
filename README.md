@@ -113,6 +113,8 @@ The toolbar picker also lets users create **custom variables** on the fly. Click
 | `contentClassName` | `string`                                          | —                     | Extra class for the content area.                                                        |
 | `variables`        | `Variable[]`                                      | —                     | Variables available in the toolbar picker. Omit to hide the picker entirely.             |
 | `onVariableAdd`    | `(variable: Variable) => void`                    | —                     | Called when the user adds a custom variable via the picker.                              |
+| `locale`           | `string`                                          | `'en'`                | BCP 47 locale string. Built-in: `'en'`, `'es'`. Register others with `registerLocale()`. Changing after mount has no effect — use `key={locale}` to force remount. |
+| `translations`     | `Partial<Translations>`                           | —                     | Fine-grained string overrides applied on top of the resolved locale.                     |
 
 ### inputType / outputType
 
@@ -130,6 +132,70 @@ These two props decouple the format used to **feed** the component from the form
 
 When `outputType` changes at runtime the component immediately fires `onChange` with the current content in the new format so the consumer stays in sync.
 
+## Internationalisation
+
+The editor UI ships in **English** (default) and **Spanish**. Pass `locale` to switch:
+
+```tsx
+<MagicTextEditor locale="es" />
+```
+
+### Override specific strings
+
+Use `translations` to replace individual strings without creating a full locale:
+
+```tsx
+<MagicTextEditor
+  locale="es"
+  translations={{ link: { applyButton: 'Confirmar' } }}
+/>
+```
+
+Any key not provided falls back to the resolved locale value. Groups are merged shallowly, so you only need to supply the keys you want to change.
+
+### Register a community locale
+
+Call `registerLocale` once at app startup (before rendering any editor):
+
+```tsx
+import { registerLocale } from 'tiptap-magictext'
+import type { Translations } from 'tiptap-magictext'
+
+const fr: Translations = {
+  toolbar: { ariaLabel: 'Mise en forme' },
+  history: { undo: 'Annuler', redo: 'Rétablir' },
+  // ... all keys required (see Translations type)
+}
+
+registerLocale('fr', fr)
+```
+
+Then use it as any other locale:
+
+```tsx
+<MagicTextEditor locale="fr" />
+```
+
+If the locale is not found in the registry the editor falls back to English gracefully.
+
+### Switching locale at runtime
+
+TipTap initialises extensions once. To switch locale after mount, remount the editor with a `key`:
+
+```tsx
+<MagicTextEditor key={locale} locale={locale} />
+```
+
+### Translations type
+
+The `Translations` interface is fully typed and exported. Use it when writing a new locale to get autocomplete and ensure no key is missing:
+
+```ts
+import type { Translations } from 'tiptap-magictext'
+
+export const de: Translations = { ... }
+```
+
 ## Exported API
 
 ```ts
@@ -137,10 +203,16 @@ When `outputType` changes at runtime the component immediately fires `onChange` 
 import { MagicTextEditor } from 'tiptap-magictext'
 
 // Types
-import type { MagicTextEditorProps, Variable, VariableType, JSONContent, ContentType } from 'tiptap-magictext'
+import type { MagicTextEditorProps, Variable, VariableType, JSONContent, ContentType, Translations } from 'tiptap-magictext'
+
+// i18n utilities
+import { registerLocale, resolveTranslations, useTranslations } from 'tiptap-magictext'
+
+// Built-in locale objects (useful as a base for partial overrides)
+import { en, es } from 'tiptap-magictext'
 
 // Toolbar sub-components (advanced usage)
-import { Toolbar, ToolbarButton, ToolbarDivider, VariableDropdown, LinkPopover, ImagePopover } from 'tiptap-magictext'
+import { Toolbar, ToolbarButton, ToolbarDivider, VariableDropdown } from 'tiptap-magictext'
 ```
 
 ## Toolbar features

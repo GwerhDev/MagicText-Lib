@@ -1,4 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
+import type { Translations } from '../i18n/types'
 
 export type ContentType = 'html' | 'json'
 
@@ -42,7 +43,21 @@ export interface MagicTextEditorProps {
   variables?: Variable[]
   /** Called when the user adds a custom variable via the picker. */
   onVariableAdd?: (variable: Variable) => void
+  /**
+   * BCP 47 locale string for the editor UI (e.g. 'en', 'es').
+   * Built-in locales: 'en' (default), 'es'.
+   * Register additional locales with `registerLocale()` before use.
+   * Changing this prop after mount has no effect — remount the component to switch locale.
+   */
+  locale?: string
+  /**
+   * Fine-grained translation overrides applied on top of the resolved locale.
+   * Any key not provided falls back to the resolved locale value.
+   * Useful for one-off string customisation without creating a full locale file.
+   */
+  translations?: Partial<Translations>
 }
 
 export type { JSONContent }
+export type { Translations }
 
