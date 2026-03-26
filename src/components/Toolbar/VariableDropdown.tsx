@@ -1,7 +1,15 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Editor } from '@tiptap/react'
-import type { Variable } from '../../types'
+import type { Variable, VariableType } from '../../types'
 import { VariableIcon } from './icons'
+
+const VARIABLE_TYPES: { value: VariableType; label: string }[] = [
+  { value: 'text', label: 'Text field' },
+  { value: 'textarea', label: 'Text area' },
+  { value: 'select', label: 'Dropdown list' },
+  { value: 'date', label: 'Date' },
+  { value: 'daterange', label: 'Date range' },
+]
 
 interface Props {
   editor: Editor
@@ -11,8 +19,12 @@ interface Props {
 
 export function VariableDropdown({ editor, variables = [], onVariableAdd }: Props) {
   const [open, setOpen] = useState(false)
+  const [view, setView] = useState<'list' | 'add'>('list')
   const [customVars, setCustomVars] = useState<Variable[]>([])
   const [newLabel, setNewLabel] = useState('')
+  const [newType, setNewType] = useState<VariableType>('text')
+  const [newOptions, setNewOptions] = useState<string[]>([])
+  const [newOption, setNewOption] = useState('')
   const wrapRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -24,20 +36,44 @@ export function VariableDropdown({ editor, variables = [], onVariableAdd }: Prop
     return () => document.removeEventListener('mousedown', handler)
   }, [open])
 
+  useEffect(() => {
+    if (!open) {
+      setView('list')
+      setNewLabel('')
+      setNewType('text')
+      setNewOptions([])
+      setNewOption('')
+    }
+  }, [open])
+
   const insert = (variable: Variable) => {
     editor.chain().focus().insertContent({
       type: 'variable',
-      attrs: { label: variable.label, value: '' },
+      attrs: { label: variable.label, value: '', type: variable.type ?? 'text', options: variable.options ?? [] },
     }).run()
     setOpen(false)
   }
 
+  const addOption = () => {
+    const trimmed = newOption.trim()
+    if (!trimmed || newOptions.includes(trimmed)) return
+    setNewOptions(prev => [...prev, trimmed])
+    setNewOption('')
+  }
+
+  const removeOption = (index: number) => {
+    setNewOptions(prev => prev.filter((_, i) => i !== index))
+  }
+
   const addCustom = () => {
     if (!newLabel.trim()) return
-    const variable: Variable = { label: newLabel.trim() }
+    const variable: Variable = {
+      label: newLabel.trim(),
+      type: newType,
+      options: newType === 'select' ? newOptions : undefined,
+    }
     setCustomVars(prev => [...prev, variable])
     onVariableAdd?.(variable)
-    setNewLabel('')
     insert(variable)
   }
 
@@ -63,7 +99,7 @@ export function VariableDropdown({ editor, variables = [], onVariableAdd }: Prop
 
       {open && (
         <div className="magic-text-editor__var-dropdown" role="dialog" aria-label="Variable picker">
-          {allVars.length > 0 && (
+          {view === 'list' ? (
             <ul className="magic-text-editor__var-list" role="listbox">
               {allVars.map((v, i) => (
                 <li key={i} role="option">
@@ -76,25 +112,96 @@ export function VariableDropdown({ editor, variables = [], onVariableAdd }: Prop
                   </button>
                 </li>
               ))}
+              <li role="option">
+                <button
+                  type="button"
+                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setView('add') }}
+                  className="magic-text-editor__var-btn magic-text-editor__var-btn--new"
+                >
+                  + Add custom variable…
+                </button>
+              </li>
             </ul>
-          )}
+          ) : (
+            <div className="magic-text-editor__var-new">
+              <div className="magic-text-editor__var-new-header">
+                <button
+                  type="button"
+                  className="magic-text-editor__var-back-btn"
+                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setView('list') }}
+                  aria-label="Back to variable list"
+                >
+                  ← Back
+                </button>
+                <span className="magic-text-editor__var-new-title">New variable</span>
+              </div>
+              <div className="magic-text-editor__var-new-body">
+                <input
+                  className="magic-text-editor__var-input"
+                  placeholder="Variable name…"
+                  value={newLabel}
+                  onChange={e => setNewLabel(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') addCustom() }}
+                  autoFocus
+                />
+                <select
+                  className="magic-text-editor__var-type-select"
+                  value={newType}
+                  onChange={e => { setNewType(e.target.value as VariableType); setNewOptions([]); setNewOption('') }}
+                >
+                  {VARIABLE_TYPES.map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
 
-          <div className="magic-text-editor__var-add">
-            <input
-              className="magic-text-editor__var-input"
-              placeholder="Custom variable…"
-              value={newLabel}
-              onChange={e => setNewLabel(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') addCustom() }}
-            />
-            <button
-              type="button"
-              className="magic-text-editor__var-add-btn"
-              onMouseDown={(e) => { e.preventDefault(); addCustom() }}
-            >
-              Add
-            </button>
-          </div>
+                {newType === 'select' && (
+                  <div className="magic-text-editor__var-options">
+                    {newOptions.length > 0 && (
+                      <ul className="magic-text-editor__var-options-list">
+                        {newOptions.map((opt, i) => (
+                          <li key={i} className="magic-text-editor__var-option-item">
+                            <span>{opt}</span>
+                            <button
+                              type="button"
+                              className="magic-text-editor__var-option-remove"
+                              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); removeOption(i) }}
+                              aria-label={`Remove ${opt}`}
+                            >
+                              ×
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <div className="magic-text-editor__var-option-add">
+                      <input
+                        className="magic-text-editor__var-input"
+                        placeholder="Add option…"
+                        value={newOption}
+                        onChange={e => setNewOption(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addOption() } }}
+                      />
+                      <button
+                        type="button"
+                        className="magic-text-editor__var-add-btn"
+                        onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); addOption() }}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  className="magic-text-editor__var-add-btn"
+                  onMouseDown={(e) => { e.preventDefault(); addCustom() }}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

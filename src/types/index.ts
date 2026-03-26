@@ -2,9 +2,15 @@ import type { JSONContent } from '@tiptap/core'
 
 export type ContentType = 'html' | 'json'
 
+export type VariableType = 'text' | 'textarea' | 'select' | 'date' | 'daterange'
+
 export interface Variable {
   /** Display name shown in the variable picker and as the chip label in the editor. */
   label: string
+  /** Input type for the variable. */
+  type?: VariableType
+  /** Options for variables of type 'select'. */
+  options?: string[]
 }
 
 export interface MagicTextEditorProps {

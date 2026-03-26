@@ -3,11 +3,13 @@ import type { Variable } from '../../types'
 import { ToolbarButton } from './ToolbarButton'
 import { ToolbarDivider } from './ToolbarDivider'
 import { VariableDropdown } from './VariableDropdown'
+import { LinkPopover } from './LinkPopover'
+import { ImagePopover } from './ImagePopover'
 import {
   BoldIcon, ItalicIcon, UnderlineIcon, StrikeIcon,
   UndoIcon, RedoIcon,
   BulletListIcon, OrderedListIcon, BlockquoteIcon,
-  CodeIcon, LinkIcon, ImageIcon, HighlightIcon, HorizontalRuleIcon,
+  CodeIcon, HighlightIcon, HorizontalRuleIcon,
   AlignLeftIcon, AlignCenterIcon, AlignRightIcon,
 } from './icons'
 
@@ -20,22 +22,6 @@ interface ToolbarProps {
 
 export function Toolbar({ editor, className, variables, onVariableAdd }: ToolbarProps) {
   if (!editor) return null
-
-  const addLink = () => {
-    const prev = editor.getAttributes('link').href as string | undefined
-    const url = window.prompt('URL', prev)
-    if (url === null) return
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run()
-      return
-    }
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-  }
-
-  const addImage = () => {
-    const url = window.prompt('Image URL')
-    if (url) editor.chain().focus().setImage({ src: url }).run()
-  }
 
   return (
     <div
@@ -189,19 +175,8 @@ export function Toolbar({ editor, className, variables, onVariableAdd }: Toolbar
       <ToolbarDivider />
 
       {/* Insert */}
-      <ToolbarButton
-        title="Insert link"
-        active={editor.isActive('link')}
-        onClick={addLink}
-      >
-        <LinkIcon />
-      </ToolbarButton>
-      <ToolbarButton
-        title="Insert image"
-        onClick={addImage}
-      >
-        <ImageIcon />
-      </ToolbarButton>
+      <LinkPopover editor={editor} />
+      <ImagePopover editor={editor} />
 
       {variables !== undefined && (
         <>
