@@ -3,14 +3,37 @@ import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import type { NodeViewProps } from '@tiptap/react'
 import { useState, useRef, useEffect } from 'react'
 
+type DateRange = { from: string; to: string }
+
+const parseRange = (val: string): DateRange => {
+  try { const p = JSON.parse(val); return { from: p.from ?? '', to: p.to ?? '' } }
+  catch { return { from: '', to: '' } }
+}
+
+const formatRangeDisplay = (val: string) => {
+  const { from, to } = parseRange(val)
+  if (from && to) return `${from} → ${to}`
+  if (from) return `From ${from}`
+  if (to) return `To ${to}`
+  return ''
+}
+
 function VariableNodeView({ node, updateAttributes, editor }: NodeViewProps) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(node.attrs.value ?? '')
+  const [draftFrom, setDraftFrom] = useState(() => parseRange(node.attrs.value ?? '').from)
+  const [draftTo, setDraftTo] = useState(() => parseRange(node.attrs.value ?? '').to)
   const [isEditable, setIsEditable] = useState(editor.isEditable)
   const inputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const selectRef = useRef<HTMLSelectElement>(null)
+  const rangeWrapRef = useRef<HTMLSpanElement>(null)
 
-  // Keep isEditable in sync reactively.
-  // setEditable() calls view.setProps() directly (no transaction) and emits 'update'.
+  const varType = node.attrs.type ?? 'text'
+  const isSelect = varType === 'select'
+  const isDateRange = varType === 'daterange'
+  const options: string[] = node.attrs.options ?? []
+
   useEffect(() => {
     const sync = () => setIsEditable(editor.isEditable)
     editor.on('update', sync)
@@ -18,10 +41,13 @@ function VariableNodeView({ node, updateAttributes, editor }: NodeViewProps) {
   }, [editor])
 
   useEffect(() => {
-    if (editing) inputRef.current?.select()
+    if (editing) {
+      inputRef.current?.select()
+      textareaRef.current?.focus()
+      selectRef.current?.focus()
+    }
   }, [editing])
 
-  // Exit edit mode if editor becomes readonly
   useEffect(() => {
     if (!isEditable && editing) setEditing(false)
   }, [isEditable, editing])
@@ -31,9 +57,31 @@ function VariableNodeView({ node, updateAttributes, editor }: NodeViewProps) {
     setEditing(false)
   }
 
+  const confirmRange = () => {
+    updateAttributes({ value: JSON.stringify({ from: draftFrom, to: draftTo }) })
+    setEditing(false)
+  }
+
   const cancel = () => {
     setDraft(node.attrs.value ?? '')
     setEditing(false)
+  }
+
+  const cancelRange = () => {
+    const { from, to } = parseRange(node.attrs.value ?? '')
+    setDraftFrom(from)
+    setDraftTo(to)
+    setEditing(false)
+  }
+
+  const startEditing = () => {
+    if (!isEditable) return
+    if (isDateRange) {
+      const { from, to } = parseRange(node.attrs.value ?? '')
+      setDraftFrom(from)
+      setDraftTo(to)
+    }
+    setEditing(true)
   }
 
   const hasFill = Boolean(node.attrs.value)
@@ -44,30 +92,107 @@ function VariableNodeView({ node, updateAttributes, editor }: NodeViewProps) {
     !isEditable ? 'magic-text-editor__variable-chip--readonly' : '',
   ].filter(Boolean).join(' ')
 
+  const displayValue = hasFill
+    ? (isDateRange ? formatRangeDisplay(node.attrs.value) : node.attrs.value)
+    : '[' + node.attrs.label + ']'
+
   return (
     <NodeViewWrapper as="span" className="magic-text-editor__variable" contentEditable={false}>
       {editing && isEditable ? (
-        <input
-          ref={inputRef}
-          className="magic-text-editor__variable-edit"
-          value={draft}
-          onChange={e => setDraft(e.target.value)}
-          onBlur={confirm}
-          onKeyDown={e => {
-            e.stopPropagation()
-            if (e.key === 'Enter') { e.preventDefault(); confirm() }
-            if (e.key === 'Escape') { e.preventDefault(); cancel() }
-          }}
-          placeholder={node.attrs.label}
-          size={Math.max((draft || node.attrs.label).length, 4)}
-        />
+        isSelect ? (
+          <select
+            ref={selectRef}
+            className="magic-text-editor__variable-edit"
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onBlur={confirm}
+            onKeyDown={e => {
+              e.stopPropagation()
+              if (e.key === 'Enter') { e.preventDefault(); confirm() }
+              if (e.key === 'Escape') { e.preventDefault(); cancel() }
+            }}
+          >
+            <option value="">— {node.attrs.label} —</option>
+            {options.map((opt: string) => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        ) : isDateRange ? (
+          <span
+            ref={rangeWrapRef}
+            className="magic-text-editor__variable-daterange"
+            onKeyDown={e => {
+              e.stopPropagation()
+              if (e.key === 'Escape') { e.preventDefault(); cancelRange() }
+            }}
+          >
+            <label className="magic-text-editor__variable-daterange-field">
+              <span>From</span>
+              <input
+                type="date"
+                className="magic-text-editor__variable-edit"
+                value={draftFrom}
+                onChange={e => setDraftFrom(e.target.value)}
+              />
+            </label>
+            <label className="magic-text-editor__variable-daterange-field">
+              <span>To</span>
+              <input
+                type="date"
+                className="magic-text-editor__variable-edit"
+                value={draftTo}
+                onChange={e => setDraftTo(e.target.value)}
+              />
+            </label>
+            <button
+              type="button"
+              className="magic-text-editor__variable-daterange-confirm"
+              onMouseDown={(e) => { e.preventDefault(); confirmRange() }}
+            >✓</button>
+            <button
+              type="button"
+              className="magic-text-editor__variable-daterange-cancel"
+              onMouseDown={(e) => { e.preventDefault(); cancelRange() }}
+            >✕</button>
+          </span>
+        ) : varType === 'textarea' ? (
+          <textarea
+            ref={textareaRef}
+            className="magic-text-editor__variable-edit magic-text-editor__variable-edit--textarea"
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onBlur={confirm}
+            onKeyDown={e => {
+              e.stopPropagation()
+              if (e.key === 'Escape') { e.preventDefault(); cancel() }
+            }}
+            placeholder={node.attrs.label}
+            rows={3}
+          />
+        ) : (
+          <input
+            ref={inputRef}
+            className="magic-text-editor__variable-edit"
+            type={varType === 'date' ? 'date' : 'text'}
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onBlur={confirm}
+            onKeyDown={e => {
+              e.stopPropagation()
+              if (e.key === 'Enter') { e.preventDefault(); confirm() }
+              if (e.key === 'Escape') { e.preventDefault(); cancel() }
+            }}
+            placeholder={node.attrs.label}
+            size={varType === 'date' ? undefined : Math.max((draft || node.attrs.label).length, 4)}
+          />
+        )
       ) : (
         <span
           className={chipClass}
-          onClick={() => isEditable && setEditing(true)}
-          title={hasFill ? `${node.attrs.label}: ${node.attrs.value}` : isEditable ? `Click to fill ${node.attrs.label}` : node.attrs.label}
+          onClick={startEditing}
+          title={hasFill ? `${node.attrs.label}: ${displayValue}` : isEditable ? `Click to fill ${node.attrs.label}` : node.attrs.label}
         >
-          {hasFill ? node.attrs.value : node.attrs.label}
+          {displayValue}
         </span>
       )}
     </NodeViewWrapper>
@@ -84,6 +209,15 @@ export const VariableExtension = Node.create({
     return {
       label: { default: null },
       value: { default: '' },
+      type: { default: 'text' },
+      options: {
+        default: [],
+        parseHTML: el => {
+          const raw = el.getAttribute('data-options')
+          try { return raw ? JSON.parse(raw) : [] } catch { return [] }
+        },
+        renderHTML: attrs => ({ 'data-options': JSON.stringify(attrs.options ?? []) }),
+      },
     }
   },
 

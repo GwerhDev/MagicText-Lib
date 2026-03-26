@@ -63,13 +63,18 @@ const [doc, setDoc] = useState<JSONContent | null>(null)
 
 Pass a list of variables to enable the variable picker in the toolbar. Variables are inserted as interactive chips; clicking a chip lets you fill in its value. Chips are non-interactive in read-only mode.
 
+Each variable can optionally have a `type` that controls the input rendered when filling it:
+
 ```tsx
 import type { Variable } from 'tiptap-magictext'
 
 const variables: Variable[] = [
   { label: 'First name' },
-  { label: 'Last name'  },
-  { label: 'Email'      },
+  { label: 'Last name' },
+  { label: 'Bio', type: 'textarea' },
+  { label: 'Country', type: 'select', options: ['US', 'MX', 'AR'] },
+  { label: 'Birthday', type: 'date' },
+  { label: 'Vacation period', type: 'daterange' },
 ]
 
 <MagicTextEditor
@@ -77,6 +82,18 @@ const variables: Variable[] = [
   onVariableAdd={(v) => console.log('new variable:', v)}
 />
 ```
+
+#### Variable types
+
+| `type`       | Input rendered when filling the chip |
+| ------------ | ------------------------------------ |
+| `'text'`     | Single-line text input (default)     |
+| `'textarea'` | Multi-line text area                 |
+| `'select'`   | Dropdown — requires `options: string[]` |
+| `'date'`     | Date picker                          |
+| `'daterange'`| Two date pickers (From / To)         |
+
+The toolbar picker also lets users create **custom variables** on the fly. Clicking **+ Add custom variable…** opens a form where the user can set a name and choose a type. For `select` variables, options can be added before inserting.
 
 ## Props
 
@@ -94,7 +111,7 @@ const variables: Variable[] = [
 | `className`        | `string`                                          | —                     | Extra class for the root wrapper.                                                        |
 | `toolbarClassName` | `string`                                          | —                     | Extra class for the toolbar.                                                             |
 | `contentClassName` | `string`                                          | —                     | Extra class for the content area.                                                        |
-| `variables`        | `Variable[]`                                      | —                     | Variables available in the toolbar picker.                                               |
+| `variables`        | `Variable[]`                                      | —                     | Variables available in the toolbar picker. Omit to hide the picker entirely.             |
 | `onVariableAdd`    | `(variable: Variable) => void`                    | —                     | Called when the user adds a custom variable via the picker.                              |
 
 ### inputType / outputType
@@ -120,10 +137,10 @@ When `outputType` changes at runtime the component immediately fires `onChange` 
 import { MagicTextEditor } from 'tiptap-magictext'
 
 // Types
-import type { MagicTextEditorProps, Variable, JSONContent, ContentType } from 'tiptap-magictext'
+import type { MagicTextEditorProps, Variable, VariableType, JSONContent, ContentType } from 'tiptap-magictext'
 
 // Toolbar sub-components (advanced usage)
-import { Toolbar, ToolbarButton, ToolbarDivider, VariableDropdown } from 'tiptap-magictext'
+import { Toolbar, ToolbarButton, ToolbarDivider, VariableDropdown, LinkPopover, ImagePopover } from 'tiptap-magictext'
 ```
 
 ## Toolbar features
@@ -136,8 +153,19 @@ import { Toolbar, ToolbarButton, ToolbarDivider, VariableDropdown } from 'tiptap
 | Lists       | Bullet list, Ordered list                            |
 | Blocks      | Blockquote, Code block, Horizontal rule              |
 | Alignment   | Left, Center, Right                                  |
-| Insert      | Link, Image                                          |
+| Insert      | Link (popover with text + URL), Image (URL or file upload) |
 | Variables   | Variable picker (when `variables` prop is set)       |
+
+### Link popover
+
+Clicking the link button opens a floating popover anchored to the selected text. It shows two fields — **Text** (pre-filled with the current selection) and **URL**. Clicking an existing link in the editor also opens the popover, pre-filled with its text and URL. A **Remove link** button is shown when the cursor is inside an existing link.
+
+### Image popover
+
+Clicking the image button opens a dropdown with two tabs:
+
+- **URL** — paste an image URL and optional alt text.
+- **Upload** — pick or drag a local file. The image is embedded as a base64 data URL and rendered inline in the editor immediately.
 
 ## Styles
 
@@ -185,9 +213,12 @@ Every visual token is exposed as a CSS variable scoped to `.magic-text-editor`. 
 | `--mte-caret-color` | `#2563eb` | Cursor color |
 | `--mte-selection-bg` | `#bfdbfe` | Text selection background |
 | `--mte-placeholder-color` | `#94a3b8` | Placeholder text color |
-| `--mte-link-color` | `#2563eb` | Link color |
-| `--mte-var-chip-bg` | `#ffedd5` | Variable chip background (unfilled) |
-| `--mte-var-chip-color` | `#c2410c` | Variable chip text color (unfilled) |
+| `--mte-link-color` | `#2563eb` | Link text color |
+| `--mte-link-bg` | `#dbeafe` | Link chip background |
+| `--mte-link-bg-hover` | `#bfdbfe` | Link chip hover background |
+| `--mte-var-chip-bg` | `#fffbda` | Variable chip background (unfilled) |
+| `--mte-var-chip-color` | `#6d6d6c` | Variable chip text color (unfilled) |
+| `--mte-var-chip-border` | `#01e1ff` | Variable chip border color |
 | `--mte-var-filled-bg` | `#fef3c7` | Variable chip background (filled) |
 | `--mte-var-filled-color` | `#92400e` | Variable chip text color (filled) |
 
