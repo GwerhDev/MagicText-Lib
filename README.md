@@ -114,7 +114,8 @@ The toolbar picker also lets users create **custom variables** on the fly. Click
 | `variables`        | `Variable[]`                                      | —                     | Variables available in the toolbar picker. Omit to hide the picker entirely.             |
 | `onVariableAdd`    | `(variable: Variable) => void`                    | —                     | Called when the user adds a custom variable via the picker.                              |
 | `locale`           | `string`                                          | `'en'`                | BCP 47 locale string. Built-in: `'en'`, `'es'`. Register others with `registerLocale()`. Changing after mount has no effect — use `key={locale}` to force remount. |
-| `translations`     | `Partial<Translations>`                           | —                     | Fine-grained string overrides applied on top of the resolved locale.                     |
+| `translations`     | `PartialTranslations`                             | —                     | Fine-grained string overrides applied on top of the resolved locale.                     |
+| `ttsCharacters`    | `TTSCharacter[]`                                  | —                     | Characters for the TTS voice-assignment toolbar button. Omit to hide the button.         |
 
 ### inputType / outputType
 
@@ -131,6 +132,72 @@ These two props decouple the format used to **feed** the component from the form
 | `'json'`     | `JSONContent` object|
 
 When `outputType` changes at runtime the component immediately fires `onChange` with the current content in the new format so the consumer stays in sync.
+
+## TTS extension
+
+The TTS extension is an optional feature for audiobook and TTS workflows. It lets authors mark text ranges with a character, voice model, and inflection. The backend receives the data as HTML attributes for processing.
+
+### Setup
+
+Pass a list of characters to enable the microphone button in the toolbar:
+
+```tsx
+import type { TTSCharacter } from 'tiptap-magictext'
+
+const characters: TTSCharacter[] = [
+  { id: 'narrator', name: 'Narrator', voice: 'en-us-neutral-1', color: '#6366f1' },
+  { id: 'alice',    name: 'Alice',    voice: 'en-us-female-1',  color: '#10b981' },
+]
+
+<MagicTextEditor ttsCharacters={characters} />
+```
+
+Omit the prop (or pass `undefined`) to hide the button entirely.
+
+### `TTSCharacter` type
+
+| Field   | Type     | Description                                                                 |
+| ------- | -------- | --------------------------------------------------------------------------- |
+| `id`    | `string` | Unique identifier written to `data-character-id` in the output HTML.        |
+| `name`  | `string` | Display name shown in the editor popover and as the badge above marked text.|
+| `voice` | `string` | TTS voice/model identifier forwarded to the backend via `data-voice`.       |
+| `color` | `string` | Hex color for the editor highlight. Auto-assigned from a palette if omitted.|
+
+### Usage
+
+1. Select a text range in the editor.
+2. Click the microphone button in the toolbar.
+3. Choose a character, optionally set a voice override and inflection, then click **Apply**.
+
+Clicking an existing TTS mark in the editor re-opens the popover pre-filled with its current values. The **Remove** button strips the mark from the selection.
+
+### Output HTML
+
+Each marked range is wrapped in a `<span>` with `data-*` attributes:
+
+```html
+<span
+  data-type="tts"
+  data-character-id="alice"
+  data-character-name="Alice"
+  data-voice="en-us-female-1"
+  data-inflection="excited"
+>Curiouser and curiouser!</span>
+```
+
+All four attributes are optional — only the ones with non-empty values are emitted.
+
+### Advanced: standalone extension
+
+`TTSMarkExtension` is exported as a standalone TipTap extension for cases where you build a custom editor with `useEditor` directly:
+
+```ts
+import { TTSMarkExtension } from 'tiptap-magictext'
+
+const editor = useEditor({
+  extensions: [StarterKit, TTSMarkExtension, /* … */],
+})
+```
 
 ## Internationalisation
 
@@ -203,7 +270,7 @@ export const de: Translations = { ... }
 import { MagicTextEditor } from 'tiptap-magictext'
 
 // Types
-import type { MagicTextEditorProps, Variable, VariableType, JSONContent, ContentType, Translations } from 'tiptap-magictext'
+import type { MagicTextEditorProps, Variable, VariableType, JSONContent, ContentType, Translations, PartialTranslations, TTSCharacter } from 'tiptap-magictext'
 
 // i18n utilities
 import { registerLocale, resolveTranslations, useTranslations } from 'tiptap-magictext'
@@ -212,7 +279,10 @@ import { registerLocale, resolveTranslations, useTranslations } from 'tiptap-mag
 import { en, es } from 'tiptap-magictext'
 
 // Toolbar sub-components (advanced usage)
-import { Toolbar, ToolbarButton, ToolbarDivider, VariableDropdown } from 'tiptap-magictext'
+import { Toolbar, ToolbarButton, ToolbarDivider, VariableDropdown, TTSPopover } from 'tiptap-magictext'
+
+// Standalone TipTap extension
+import { TTSMarkExtension } from 'tiptap-magictext'
 ```
 
 ## Toolbar features
@@ -227,6 +297,7 @@ import { Toolbar, ToolbarButton, ToolbarDivider, VariableDropdown } from 'tiptap
 | Alignment   | Left, Center, Right                                  |
 | Insert      | Link (popover with text + URL), Image (URL or file upload) |
 | Variables   | Variable picker (when `variables` prop is set)       |
+| TTS         | Voice/character assignment (when `ttsCharacters` prop is set)       |
 
 ### Link popover
 

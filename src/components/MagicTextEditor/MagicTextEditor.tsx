@@ -13,6 +13,7 @@ import Color from '@tiptap/extension-color'
 import type { MagicTextEditorProps } from '../../types'
 import { Toolbar } from '../Toolbar'
 import { VariableExtension } from '../../extensions/VariableExtension'
+import { TTSMarkExtension } from '../../extensions/TTSMarkExtension'
 import { TranslationsContext, resolveTranslations } from '../../i18n'
 
 export function MagicTextEditor({
@@ -30,6 +31,7 @@ export function MagicTextEditor({
   contentClassName,
   variables,
   onVariableAdd,
+  ttsCharacters,
   locale,
   translations: translationOverrides,
 }: MagicTextEditorProps) {
@@ -45,6 +47,7 @@ export function MagicTextEditor({
   const editor = useEditor({
     extensions: [
       StarterKit,
+      TTSMarkExtension,
       VariableExtension.configure({ translations: t.variableNode }),
       Underline,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
@@ -105,6 +108,7 @@ export function MagicTextEditor({
             className={toolbarClassName}
             variables={variables}
             onVariableAdd={onVariableAdd}
+            ttsCharacters={ttsCharacters}
           />
         )}
         <EditorContent

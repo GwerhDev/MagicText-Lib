@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { resolveTranslations, registerLocale } from './index'
+import type { Translations } from './types'
 import { en } from './locales/en'
 import { es } from './locales/es'
-import type { Translations } from './types'
 
 describe('resolveTranslations', () => {
   // ─── Defaults ───────────────────────────────────────────────────────────────
@@ -56,6 +56,13 @@ describe('resolveTranslations', () => {
     expect(t.variableNode.clickToFill('Nombre')).toBe('Clic para completar Nombre')
   })
 
+  it('returns Spanish tts labels for locale="es"', () => {
+    const t = resolveTranslations('es')
+    expect(t.tts.insertTTS).toBe('Asignar voz')
+    expect(t.tts.characterLabel).toBe('Personaje')
+    expect(t.tts.applyButton).toBe('Aplicar')
+  })
+
   it('returns English for locale="en" explicitly', () => {
     const t = resolveTranslations('en')
     expect(t.history.undo).toBe('Undo')
@@ -98,7 +105,7 @@ describe('resolveTranslations', () => {
 
   it('supports partial group overrides without losing other keys in the group', () => {
     const t = resolveTranslations('es', {
-      variables: { addButton: 'Guardar' } as Partial<Translations['variables']>,
+      variables: { addButton: 'Guardar' },
     })
     expect(t.variables.addButton).toBe('Guardar')
     // Other variables keys are preserved from the locale
@@ -108,7 +115,7 @@ describe('resolveTranslations', () => {
 
   it('supports partial typeLabels overrides without losing other typeLabels', () => {
     const t = resolveTranslations('es', {
-      variables: { typeLabels: { date: 'Fecha personalizada' } } as Partial<Translations['variables']>,
+      variables: { typeLabels: { date: 'Fecha personalizada' } },
     })
     expect(t.variables.typeLabels.date).toBe('Fecha personalizada')
     expect(t.variables.typeLabels.text).toBe(es.variables.typeLabels.text)
@@ -117,9 +124,17 @@ describe('resolveTranslations', () => {
   it('supports overriding a function key', () => {
     const custom = (label: string) => `Fill: ${label}`
     const t = resolveTranslations(undefined, {
-      variableNode: { clickToFill: custom } as Partial<Translations['variableNode']>,
+      variableNode: { clickToFill: custom },
     })
     expect(t.variableNode.clickToFill('X')).toBe('Fill: X')
+  })
+
+  it('supports overriding tts keys without losing others', () => {
+    const t = resolveTranslations('es', {
+      tts: { insertTTS: 'Asignar TTS' },
+    })
+    expect(t.tts.insertTTS).toBe('Asignar TTS')
+    expect(t.tts.characterLabel).toBe(es.tts.characterLabel)
   })
 })
 

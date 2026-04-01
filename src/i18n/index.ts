@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { Translations } from './types'
+import type { Translations, PartialTranslations } from './types'
 import { en } from './locales/en'
 import { es } from './locales/es'
 
@@ -30,7 +30,7 @@ export function registerLocale(locale: string, translations: Translations): void
  * so partial group overrides work (e.g. overriding one `variables.*` key without
  * re-supplying all keys in the group).
  */
-function mergeTranslations(base: Translations, patch: Partial<Translations>): Translations {
+function mergeTranslations(base: Translations, patch: PartialTranslations): Translations {
   return {
     toolbar:    { ...base.toolbar,    ...(patch.toolbar    ?? {}) },
     history:    { ...base.history,    ...(patch.history    ?? {}) },
@@ -48,6 +48,7 @@ function mergeTranslations(base: Translations, patch: Partial<Translations>): Tr
         ...(patch.variables?.typeLabels ?? {}),
       },
     },
+    tts:          { ...base.tts,          ...(patch.tts          ?? {}) },
     variableNode: { ...base.variableNode, ...(patch.variableNode ?? {}) },
   }
 }
@@ -62,7 +63,7 @@ function mergeTranslations(base: Translations, patch: Partial<Translations>): Tr
  */
 export function resolveTranslations(
   locale?: string,
-  overrides?: Partial<Translations>,
+  overrides?: PartialTranslations,
 ): Translations {
   const localeTranslations = locale ? localeRegistry.get(locale) : undefined
   const withLocale = localeTranslations ? mergeTranslations(en, localeTranslations) : en
@@ -87,6 +88,6 @@ export function useTranslations(): Translations {
 
 // ── Re-exports ────────────────────────────────────────────────────────────────
 
-export type { Translations } from './types'
+export type { Translations, PartialTranslations } from './types'
 export { en } from './locales/en'
 export { es } from './locales/es'

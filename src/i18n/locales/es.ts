@@ -74,6 +74,18 @@ export const es: Translations = {
       daterange: 'Rango de fechas',
     },
   },
+  tts: {
+    insertTTS: 'Asignar voz',
+    popoverAriaLabel: 'Asignación de voz',
+    characterLabel: 'Personaje',
+    characterPlaceholder: 'Nombre del personaje…',
+    voiceLabel: 'Voz / modelo',
+    voicePlaceholder: 'ej. es-mx-female-1',
+    inflectionLabel: 'Inflexión',
+    inflectionPlaceholder: 'ej. emocionado, susurrando…',
+    applyButton: 'Aplicar',
+    removeButton: 'Eliminar marca',
+  },
   variableNode: {
     fromLabel: 'Desde',
     toLabel: 'Hasta',

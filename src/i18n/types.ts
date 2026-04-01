@@ -1,3 +1,25 @@
+/**
+ * A deeply-partial version of Translations intended for the `translations` prop
+ * and the `overrides` argument of `resolveTranslations`. Each top-level group
+ * is optional, and within a group each individual key is also optional, so you
+ * can override a single label without re-specifying the entire group.
+ */
+export type PartialTranslations = {
+  toolbar?: Partial<Translations['toolbar']>
+  history?: Partial<Translations['history']>
+  formatting?: Partial<Translations['formatting']>
+  headings?: Partial<Translations['headings']>
+  blocks?: Partial<Translations['blocks']>
+  alignment?: Partial<Translations['alignment']>
+  link?: Partial<Translations['link']>
+  image?: Partial<Translations['image']>
+  tts?: Partial<Translations['tts']>
+  variables?: Partial<Omit<Translations['variables'], 'typeLabels'>> & {
+    typeLabels?: Partial<Translations['variables']['typeLabels']>
+  }
+  variableNode?: Partial<Translations['variableNode']>
+}
+
 export interface Translations {
   toolbar: {
     /** aria-label for the toolbar wrapper element */
@@ -90,6 +112,24 @@ export interface Translations {
       date: string
       daterange: string
     }
+  }
+
+  /**
+   * Strings for the TTS mark popover.
+   */
+  tts: {
+    /** Tooltip and aria-label for the TTS toolbar button */
+    insertTTS: string
+    /** aria-label for the TTS popover dialog */
+    popoverAriaLabel: string
+    characterLabel: string
+    characterPlaceholder: string
+    voiceLabel: string
+    voicePlaceholder: string
+    inflectionLabel: string
+    inflectionPlaceholder: string
+    applyButton: string
+    removeButton: string
   }
 
   /**

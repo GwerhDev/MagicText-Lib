@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { MagicTextEditor } from './MagicTextEditor'
-import type { Variable } from '../../types'
+import type { Variable, TTSCharacter } from '../../types'
 
 describe('MagicTextEditor', () => {
   // ─── Root & layout ──────────────────────────────────────────────────────────
@@ -133,6 +133,32 @@ describe('MagicTextEditor', () => {
   it('accepts an onVariableAdd callback without throwing', () => {
     const onVariableAdd = vi.fn()
     expect(() => render(<MagicTextEditor variables={[]} onVariableAdd={onVariableAdd} />)).not.toThrow()
+  })
+
+  // ─── TTS extension ──────────────────────────────────────────────────────────
+
+  it('renders the TTS button when ttsCharacters prop is provided', () => {
+    const characters: TTSCharacter[] = [{ id: 'narrator', name: 'Narrator' }]
+    render(<MagicTextEditor ttsCharacters={characters} />)
+    expect(screen.getByTitle('Assign voice')).toBeInTheDocument()
+  })
+
+  it('does not render the TTS button when ttsCharacters prop is omitted', () => {
+    render(<MagicTextEditor />)
+    expect(screen.queryByTitle('Assign voice')).not.toBeInTheDocument()
+  })
+
+  it('renders the TTS button with Spanish title when locale="es"', () => {
+    const characters: TTSCharacter[] = [{ id: 'narrator', name: 'Narrator' }]
+    render(<MagicTextEditor locale="es" ttsCharacters={characters} />)
+    expect(screen.getByTitle('Asignar voz')).toBeInTheDocument()
+  })
+
+  it('accepts ttsCharacters with color and voice without throwing', () => {
+    const characters: TTSCharacter[] = [
+      { id: 'alice', name: 'Alice', voice: 'en-us-female-1', color: '#10b981' },
+    ]
+    expect(() => render(<MagicTextEditor ttsCharacters={characters} />)).not.toThrow()
   })
 
   // ─── Internationalisation ────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
-import type { Translations } from '../i18n/types'
+import type { Translations, PartialTranslations } from '../i18n/types'
 
 export type ContentType = 'html' | 'json'
 
@@ -12,6 +12,21 @@ export interface Variable {
   type?: VariableType
   /** Options for variables of type 'select'. */
   options?: string[]
+}
+
+/**
+ * A named character/speaker for the TTS extension.
+ * Characters appear as quick-select buttons in the voice-assignment popover.
+ */
+export interface TTSCharacter {
+  /** Unique identifier used in the output data-character-id attribute. */
+  id: string
+  /** Display name shown in the editor UI and in the output data-character-name attribute. */
+  name: string
+  /** TTS voice or model identifier forwarded to the backend (data-voice). */
+  voice?: string
+  /** Hex color for the editor highlight. Auto-assigned from a built-in palette if omitted. */
+  color?: string
 }
 
 export interface MagicTextEditorProps {
@@ -44,6 +59,14 @@ export interface MagicTextEditorProps {
   /** Called when the user adds a custom variable via the picker. */
   onVariableAdd?: (variable: Variable) => void
   /**
+   * Characters available in the TTS voice-assignment toolbar button.
+   * When provided, the microphone button appears in the toolbar. Each selected
+   * text range can be tagged with a character, TTS voice, and inflection for
+   * the backend to process.
+   * Omit (or leave undefined) to hide the TTS button entirely.
+   */
+  ttsCharacters?: TTSCharacter[]
+  /**
    * BCP 47 locale string for the editor UI (e.g. 'en', 'es').
    * Built-in locales: 'en' (default), 'es'.
    * Register additional locales with `registerLocale()` before use.
@@ -52,12 +75,12 @@ export interface MagicTextEditorProps {
   locale?: string
   /**
    * Fine-grained translation overrides applied on top of the resolved locale.
-   * Any key not provided falls back to the resolved locale value.
-   * Useful for one-off string customisation without creating a full locale file.
+   * Each top-level group is optional, and within a group each individual key
+   * is also optional — override only what you need.
    */
-  translations?: Partial<Translations>
+  translations?: PartialTranslations
 }
 
 export type { JSONContent }
-export type { Translations }
+export type { Translations, PartialTranslations }
 

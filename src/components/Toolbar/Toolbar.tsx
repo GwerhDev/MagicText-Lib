@@ -1,10 +1,11 @@
 import type { Editor } from '@tiptap/react'
-import type { Variable } from '../../types'
+import type { Variable, TTSCharacter } from '../../types'
 import { ToolbarButton } from './ToolbarButton'
 import { ToolbarDivider } from './ToolbarDivider'
 import { VariableDropdown } from './VariableDropdown'
 import { LinkPopover } from './LinkPopover'
 import { ImagePopover } from './ImagePopover'
+import { TTSPopover } from './TTSPopover'
 import {
   BoldIcon, ItalicIcon, UnderlineIcon, StrikeIcon,
   UndoIcon, RedoIcon,
@@ -19,9 +20,10 @@ interface ToolbarProps {
   className?: string
   variables?: Variable[]
   onVariableAdd?: (variable: Variable) => void
+  ttsCharacters?: TTSCharacter[]
 }
 
-export function Toolbar({ editor, className, variables, onVariableAdd }: ToolbarProps) {
+export function Toolbar({ editor, className, variables, onVariableAdd, ttsCharacters }: ToolbarProps) {
   if (!editor) return null
   const t = useTranslations()
 
@@ -184,6 +186,13 @@ export function Toolbar({ editor, className, variables, onVariableAdd }: Toolbar
         <>
           <ToolbarDivider />
           <VariableDropdown editor={editor} variables={variables} onVariableAdd={onVariableAdd} />
+        </>
+      )}
+
+      {ttsCharacters !== undefined && (
+        <>
+          <ToolbarDivider />
+          <TTSPopover editor={editor} characters={ttsCharacters} />
         </>
       )}
     </div>
