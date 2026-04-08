@@ -154,11 +154,18 @@ describe('MagicTextEditor', () => {
     expect(screen.getByTitle('Asignar voz')).toBeInTheDocument()
   })
 
-  it('accepts ttsCharacters with color and voice without throwing', () => {
+  it('accepts ttsCharacters with voices and color without throwing', () => {
     const characters: TTSCharacter[] = [
-      { id: 'alice', name: 'Alice', voice: 'en-us-female-1', color: '#10b981' },
+      { id: 'alice', name: 'Alice', voices: ['en-us-female-1', 'en-us-female-3'], color: '#10b981' },
     ]
     expect(() => render(<MagicTextEditor ttsCharacters={characters} />)).not.toThrow()
+  })
+
+  it('accepts ttsInflections without throwing', () => {
+    const characters: TTSCharacter[] = [{ id: 'narrator', name: 'Narrator' }]
+    expect(() =>
+      render(<MagicTextEditor ttsCharacters={characters} ttsInflections={['neutral', 'excited']} />)
+    ).not.toThrow()
   })
 
   // ─── Internationalisation ────────────────────────────────────────────────────

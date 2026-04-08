@@ -60,6 +60,8 @@ describe('resolveTranslations', () => {
     const t = resolveTranslations('es')
     expect(t.tts.insertTTS).toBe('Asignar voz')
     expect(t.tts.characterLabel).toBe('Personaje')
+    expect(t.tts.voiceSelectDefault).toBe('Selecciona una voz…')
+    expect(t.tts.inflectionSelectDefault).toBe('Selecciona una inflexión…')
     expect(t.tts.applyButton).toBe('Aplicar')
   })
 

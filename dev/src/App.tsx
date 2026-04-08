@@ -14,7 +14,7 @@ const fr: Translations = {
   link: { insertLink: 'Insérer un lien', editorAriaLabel: 'Éditeur de lien', textLabel: 'Texte', textPlaceholder: 'Texte du lien…', urlLabel: 'URL', urlPlaceholder: 'https://…', applyButton: 'Appliquer', removeLinkButton: 'Supprimer le lien' },
   image: { insertImage: 'Insérer une image', inserterAriaLabel: 'Insertion d\'image', urlTab: 'URL', uploadTab: 'Téléverser', imageUrlLabel: 'URL de l\'image', urlPlaceholder: 'https://…', altTextLabel: 'Texte alternatif', altTextPlaceholder: 'Description de l\'image…', insertButton: 'Insérer', dropzoneHint: 'Cliquez ou glissez une image ici' },
   variables: { insertVariable: 'Insérer une variable', pickerAriaLabel: 'Sélecteur de variables', addCustomVariable: '+ Ajouter une variable…', back: '← Retour', backAriaLabel: 'Retour à la liste', newVariableTitle: 'Nouvelle variable', namePlaceholder: 'Nom de la variable…', addButton: 'Ajouter', addOptionButton: '+', addOptionPlaceholder: 'Ajouter une option…', removeOption: (o) => `Supprimer ${o}`, typeLabels: { text: 'Champ texte', textarea: 'Zone de texte', select: 'Liste déroulante', date: 'Date', daterange: 'Plage de dates' } },
-  tts: { insertTTS: 'Assigner une voix', popoverAriaLabel: 'Attribution de voix', characterLabel: 'Personnage', characterPlaceholder: 'Nom du personnage…', voiceLabel: 'Voix / modèle', voicePlaceholder: 'ex. fr-fr-female-1', inflectionLabel: 'Inflexion', inflectionPlaceholder: 'ex. excité, murmure…', applyButton: 'Appliquer', removeButton: 'Supprimer la marque' },
+  tts: { insertTTS: 'Assigner une voix', popoverAriaLabel: 'Attribution de voix', characterLabel: 'Personnage', characterPlaceholder: 'Nom du personnage…', voiceLabel: 'Voix / modèle', voiceSelectDefault: 'Sélectionner une voix…', inflectionLabel: 'Inflexion', inflectionSelectDefault: 'Sélectionner une inflexion…', applyButton: 'Appliquer', removeButton: 'Supprimer la marque' },
   variableNode: { fromLabel: 'Du', toLabel: 'Au', clickToFill: (l) => `Cliquez pour remplir ${l}`, variableTitle: (l, v) => `${l} : ${v}` },
 }
 
@@ -23,11 +23,13 @@ registerLocale('fr', fr)
 const INITIAL_HTML = `<h2>Welcome to MagicText</h2><p>This is a <strong>rich text editor</strong> built with <em>TipTap</em>. Try editing the content!</p><ul><li>Bold, italic, underline</li><li>Headings and lists</li><li>Links and images</li></ul><p><span data-type="tts" data-character-id="narrator" data-character-name="Narrator" data-voice="en-us-neutral-1" data-color="#6366f1" style="--tts-color: #6366f1; --tts-bg: rgba(99,102,241,0.13);" class="magic-text-editor__tts">In the beginning, there was silence.</span> Then, from the depths of the forest, a voice rang out:</p><p><span data-type="tts" data-character-id="alice" data-character-name="Alice" data-voice="en-us-female-1" data-inflection="excited" data-color="#10b981" style="--tts-color: #10b981; --tts-bg: rgba(16,185,129,0.13);" class="magic-text-editor__tts">Curiouser and curiouser!</span></p>`
 
 const TTS_CHARACTERS: TTSCharacter[] = [
-  { id: 'narrator', name: 'Narrator', voice: 'en-us-neutral-1', color: '#6366f1' },
-  { id: 'alice', name: 'Alice', voice: 'en-us-female-1', color: '#10b981' },
-  { id: 'cheshire', name: 'Cheshire Cat', voice: 'en-us-male-2', color: '#f59e0b' },
-  { id: 'queen', name: 'Queen of Hearts', voice: 'en-us-female-2', color: '#ef4444' },
+  { id: 'narrator', name: 'Narrator', voices: ['en-us-neutral-1', 'en-us-neutral-2'], color: '#6366f1' },
+  { id: 'alice', name: 'Alice', voices: ['en-us-female-1', 'en-us-female-3'], color: '#10b981' },
+  { id: 'cheshire', name: 'Cheshire Cat', voices: ['en-us-male-2', 'en-us-male-4'], color: '#f59e0b' },
+  { id: 'queen', name: 'Queen of Hearts', voices: ['en-us-female-2'], color: '#ef4444' },
 ]
+
+const TTS_INFLECTIONS = ['neutral', 'excited', 'sad', 'angry', 'whispering', 'dramatic']
 
 const EXAMPLE_VARIABLES: Variable[] = [
   { label: 'First name' },
@@ -110,6 +112,7 @@ export default function App() {
         variables={EXAMPLE_VARIABLES}
         onVariableAdd={(v) => console.log('[dev] variable added:', v)}
         ttsCharacters={TTS_CHARACTERS}
+        ttsInflections={TTS_INFLECTIONS}
       />
 
       <div style={{ marginTop: 16, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>

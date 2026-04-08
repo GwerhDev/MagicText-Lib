@@ -21,9 +21,10 @@ interface ToolbarProps {
   variables?: Variable[]
   onVariableAdd?: (variable: Variable) => void
   ttsCharacters?: TTSCharacter[]
+  ttsInflections?: string[]
 }
 
-export function Toolbar({ editor, className, variables, onVariableAdd, ttsCharacters }: ToolbarProps) {
+export function Toolbar({ editor, className, variables, onVariableAdd, ttsCharacters, ttsInflections }: ToolbarProps) {
   if (!editor) return null
   const t = useTranslations()
 
@@ -192,7 +193,7 @@ export function Toolbar({ editor, className, variables, onVariableAdd, ttsCharac
       {ttsCharacters !== undefined && (
         <>
           <ToolbarDivider />
-          <TTSPopover editor={editor} characters={ttsCharacters} />
+          <TTSPopover editor={editor} characters={ttsCharacters} inflections={ttsInflections} />
         </>
       )}
     </div>

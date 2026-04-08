@@ -32,6 +32,7 @@ export function MagicTextEditor({
   variables,
   onVariableAdd,
   ttsCharacters,
+  ttsInflections,
   locale,
   translations: translationOverrides,
 }: MagicTextEditorProps) {
@@ -109,6 +110,7 @@ export function MagicTextEditor({
             variables={variables}
             onVariableAdd={onVariableAdd}
             ttsCharacters={ttsCharacters}
+            ttsInflections={ttsInflections}
           />
         )}
         <EditorContent

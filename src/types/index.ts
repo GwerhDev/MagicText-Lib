@@ -23,8 +23,8 @@ export interface TTSCharacter {
   id: string
   /** Display name shown in the editor UI and in the output data-character-name attribute. */
   name: string
-  /** TTS voice or model identifier forwarded to the backend (data-voice). */
-  voice?: string
+  /** Available TTS voice/model options for this character. Rendered as a select in the popover. */
+  voices?: string[]
   /** Hex color for the editor highlight. Auto-assigned from a built-in palette if omitted. */
   color?: string
 }
@@ -66,6 +66,11 @@ export interface MagicTextEditorProps {
    * Omit (or leave undefined) to hide the TTS button entirely.
    */
   ttsCharacters?: TTSCharacter[]
+  /**
+   * Global list of inflection options shown as a select in the TTS popover.
+   * Omit to hide the inflection field.
+   */
+  ttsInflections?: string[]
   /**
    * BCP 47 locale string for the editor UI (e.g. 'en', 'es').
    * Built-in locales: 'en' (default), 'es'.

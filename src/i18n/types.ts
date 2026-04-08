@@ -125,9 +125,9 @@ export interface Translations {
     characterLabel: string
     characterPlaceholder: string
     voiceLabel: string
-    voicePlaceholder: string
+    voiceSelectDefault: string
     inflectionLabel: string
-    inflectionPlaceholder: string
+    inflectionSelectDefault: string
     applyButton: string
     removeButton: string
   }

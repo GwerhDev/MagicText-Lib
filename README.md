@@ -116,6 +116,7 @@ The toolbar picker also lets users create **custom variables** on the fly. Click
 | `locale`           | `string`                                          | `'en'`                | BCP 47 locale string. Built-in: `'en'`, `'es'`. Register others with `registerLocale()`. Changing after mount has no effect — use `key={locale}` to force remount. |
 | `translations`     | `PartialTranslations`                             | —                     | Fine-grained string overrides applied on top of the resolved locale.                     |
 | `ttsCharacters`    | `TTSCharacter[]`                                  | —                     | Characters for the TTS voice-assignment toolbar button. Omit to hide the button.         |
+| `ttsInflections`   | `string[]`                                        | —                     | Global list of inflection options shown as a select. Omit to hide the inflection field.  |
 
 ### inputType / outputType
 
@@ -145,31 +146,44 @@ Pass a list of characters to enable the microphone button in the toolbar:
 import type { TTSCharacter } from 'tiptap-magictext'
 
 const characters: TTSCharacter[] = [
-  { id: 'narrator', name: 'Narrator', voice: 'en-us-neutral-1', color: '#6366f1' },
-  { id: 'alice',    name: 'Alice',    voice: 'en-us-female-1',  color: '#10b981' },
+  { id: 'narrator', name: 'Narrator', voices: ['en-us-neutral-1', 'en-us-neutral-2'], color: '#6366f1' },
+  { id: 'alice',    name: 'Alice',    voices: ['en-us-female-1', 'en-us-female-3'],   color: '#10b981' },
 ]
 
-<MagicTextEditor ttsCharacters={characters} />
+const inflections = ['neutral', 'excited', 'sad', 'whispering', 'dramatic']
+
+<MagicTextEditor ttsCharacters={characters} ttsInflections={inflections} />
 ```
 
 Omit the prop (or pass `undefined`) to hide the button entirely.
 
 ### `TTSCharacter` type
 
-| Field   | Type     | Description                                                                 |
-| ------- | -------- | --------------------------------------------------------------------------- |
-| `id`    | `string` | Unique identifier written to `data-character-id` in the output HTML.        |
-| `name`  | `string` | Display name shown in the editor popover and as the badge above marked text.|
-| `voice` | `string` | TTS voice/model identifier forwarded to the backend via `data-voice`.       |
-| `color` | `string` | Hex color for the editor highlight. Auto-assigned from a palette if omitted.|
+| Field    | Type       | Description                                                                  |
+| -------- | ---------- | ---------------------------------------------------------------------------- |
+| `id`     | `string`   | Unique identifier written to `data-character-id` in the output HTML.         |
+| `name`   | `string`   | Display name shown in the editor popover and as the badge above marked text. |
+| `voices` | `string[]` | Available TTS voice/model options. Rendered as a select when a character is selected. Omit to hide the voice field for that character. |
+| `color`  | `string`   | Hex color for the editor highlight. Auto-assigned from a palette if omitted. |
 
 ### Usage
 
-1. Select a text range in the editor.
-2. Click the microphone button in the toolbar.
-3. Choose a character, optionally set a voice override and inflection, then click **Apply**.
+There are three ways to open the TTS popover:
 
-Clicking an existing TTS mark in the editor re-opens the popover pre-filled with its current values. The **Remove** button strips the mark from the selection.
+| Trigger | How |
+| ------- | --- |
+| **Hover** | Select text, then hover over the selection for ~600 ms. The popover appears anchored to the selected text automatically. |
+| **Toolbar button** | Click the microphone button in the toolbar at any time. |
+| **Click existing mark** | Click any TTS-marked span in the editor to edit it. |
+
+Once the popover is open:
+
+1. Choose a character from the grid (or type a custom name).
+2. If the character has `voices`, pick one from the dropdown. When no character is selected, all voices from all characters are shown.
+3. If `ttsInflections` was provided, pick an inflection.
+4. Click **Apply**.
+
+The **Remove** button appears when the cursor is inside an existing TTS mark and strips the mark from the range.
 
 ### Output HTML
 
