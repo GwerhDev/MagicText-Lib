@@ -24,6 +24,7 @@
   --mte-btn-hover-color: #0f172a;
   --mte-btn-active-bg: #dbeafe;
   --mte-btn-active-color: #486872;
+  --mte-icon-color: var(--mte-btn-color);
 
   --mte-divider-color: #e2e8f0;
 
@@ -97,7 +98,7 @@
   border-radius: 5px;
   background: transparent;
   cursor: pointer;
-  color: var(--mte-btn-color);
+  color: var(--mte-icon-color);
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;

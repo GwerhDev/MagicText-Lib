@@ -393,7 +393,8 @@ Every visual token is exposed as a CSS variable scoped to `.magic-text-editor`. 
 | `--mte-color` | `#0f172a` | Default text color |
 | `--mte-toolbar-bg` | `#f8fafc` | Toolbar background |
 | `--mte-toolbar-border` | `#e2e8f0` | Toolbar bottom border |
-| `--mte-btn-color` | `#475569` | Toolbar button color |
+| `--mte-btn-color` | `#475569` | Toolbar button base color (also the default for `--mte-icon-color`) |
+| `--mte-icon-color` | `var(--mte-btn-color)` | Icon and label color for toolbar buttons — override this for light/dark theming |
 | `--mte-btn-hover-bg` | `#e2e8f0` | Toolbar button hover background |
 | `--mte-btn-active-bg` | `#dbeafe` | Active toolbar button background |
 | `--mte-btn-active-color` | `#1d4ed8` | Active toolbar button color |
@@ -408,6 +409,24 @@ Every visual token is exposed as a CSS variable scoped to `.magic-text-editor`. 
 | `--mte-var-chip-border` | `#01e1ff` | Variable chip border color |
 | `--mte-var-filled-bg` | `#fef3c7` | Variable chip background (filled) |
 | `--mte-var-filled-color` | `#92400e` | Variable chip text color (filled) |
+
+### Light / dark mode
+
+Use `--mte-icon-color` to adapt the toolbar icon color to the current color scheme without touching internal selectors:
+
+```css
+/* media query */
+@media (prefers-color-scheme: dark) {
+  .magic-text-editor {
+    --mte-icon-color: #cbd5e1;
+  }
+}
+
+/* or via a wrapper class */
+.dark .magic-text-editor {
+  --mte-icon-color: #cbd5e1;
+}
+```
 
 ## Development
 
