@@ -399,7 +399,7 @@ The editor applies **no default styles** to HTML elements (`h1`–`h3`, `p`, `ul
 
 ### Tailwind / custom classes
 
-All default rules are wrapped in `:where()`, so their specificity is **zero**. Any class you pass — including Tailwind utilities — always wins without needing `!important`.
+All internal rules use BEM class selectors (specificity `0,1,0` or higher). This means they always win over global element rules like `button { }` or `input { }` in the consuming app, preventing style bleed without `!important`. Classes you apply directly to an element — including Tailwind utilities — share the same or higher specificity and always take effect.
 
 ```tsx
 <MagicTextEditor
