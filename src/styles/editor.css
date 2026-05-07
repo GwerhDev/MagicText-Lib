@@ -29,7 +29,6 @@
   --mte-divider-color: #e5e7eb;
 
   --mte-caret-color: #3b82f6;
-  --mte-selection-bg: #dbeafe;
   --mte-placeholder-color: #9ca3af;
 
   --mte-var-chip-bg: #f3f4f6;
@@ -47,6 +46,10 @@
   --mte-dropdown-btn-hover-bg: #f9fafb;
   --mte-dropdown-add-btn-bg: #3b82f6;
   --mte-dropdown-add-btn-hover-bg: #2563eb;
+
+  --mte-danger-color: #dc2626;
+  --mte-danger-hover-bg: rgba(220, 38, 38, 0.08);
+  --mte-danger-border: #fca5a5;
 }
 
 /*
@@ -57,8 +60,6 @@
 
 /* ─── Root ───────────────────────────────────────────────────────────────────── */
 .magic-text-editor {
-  border: 1px solid var(--mte-border-color);
-  border-radius: var(--mte-radius);
   background: var(--mte-bg);
   font-family: inherit;
   color: var(--mte-color);
@@ -146,11 +147,6 @@
   pointer-events: none;
   float: left;
   height: 0;
-}
-
-/* ─── Selection ──────────────────────────────────────────────────────────────── */
-.magic-text-editor .ProseMirror ::selection {
-  background: var(--mte-selection-bg);
 }
 
 /* ─── Variable picker (toolbar dropdown) ─────────────────────────────────────── */
@@ -449,7 +445,7 @@
   border: none;
   border-top: 1px solid var(--mte-dropdown-border);
   background: transparent;
-  color: #dc2626;
+  color: var(--mte-danger-color);
   font-size: 12px;
   font-family: inherit;
   text-align: left;
@@ -457,7 +453,7 @@
 }
 
 .magic-text-editor__link-remove-btn:hover {
-  background: #fef2f2;
+  background: var(--mte-danger-hover-bg);
 }
 
 /* ─── Image popover ──────────────────────────────────────────────────────────── */
@@ -555,19 +551,6 @@
   border-bottom-width: 3px;
 }
 
-.magic-text-editor .ProseMirror .magic-text-editor__tts::after {
-  content: attr(data-character-name);
-  font-size: 0.6em;
-  font-weight: 700;
-  vertical-align: super;
-  color: var(--tts-color, #8b5cf6);
-  margin-left: 2px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  opacity: 0.8;
-  pointer-events: none;
-}
-
 /* ─── TTS hover icon (floats above selection, click to open popover) ─────────── */
 .magic-text-editor__tts-hover-icon {
   position: fixed;
@@ -584,7 +567,7 @@
 
 /* ─── TTS popover ────────────────────────────────────────────────────────────── */
 .magic-text-editor__tts-popover {
-  min-width: 260px;
+  width: 300px;
 }
 
 .magic-text-editor__tts-popover .magic-text-editor__link-body {
@@ -646,13 +629,13 @@
 }
 
 .magic-text-editor__tts-play-btn--playing {
-  color: #dc2626;
-  border-color: #fca5a5;
+  color: var(--mte-danger-color);
+  border-color: var(--mte-danger-border);
 }
 
 .magic-text-editor__tts-play-btn--playing:hover {
-  background: #fef2f2;
-  border-color: #dc2626;
+  background: var(--mte-danger-hover-bg);
+  border-color: var(--mte-danger-color);
 }
 
 .magic-text-editor__tts-play-btn:disabled,
